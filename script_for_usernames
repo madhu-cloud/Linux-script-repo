@@ -1,0 +1,23 @@
+#!/bin/bash
+while true
+do
+read -p "Please Enter The User Name:" USERNAME
+if [ -n "$USERNAME" ]; then
+	echo "$USERNAME is valid."
+	EXUSER=$(cat /etc/passwd | grep -i $USERNAME | cut -d ":" -f 1)
+	if [ "$EXUSER" == "$USERNAME" ]; then
+    	echo "User $USERNAME Already Exists, Please Select a Diffrent Username"
+	else
+    	#read -s -p "Please Enter The Password:" PASSWORD
+    	SPECIAL='!@#$%^&*()_+'
+    	SPECCHAR=$(echo $SPECIAL | fold -w 1 | shuf | head -1)
+    	PASSWORD="India${SPECCHAR}${RANDOM}"
+    	useradd -m $USERNAME
+    	echo "$USERNAME:$PASSWORD" | sudo chpasswd
+    	passwd -e $USERNAME
+    	echo "$USERNAME sucessfully created & temp password is $PASSWORD"
+	fi
+else
+	echo "Invalid Username"
+fi
+done
